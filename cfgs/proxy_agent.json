@@ -1,0 +1,18 @@
+{
+  "proxy_agent": {
+    "ip": "10.10.10.201",
+    "port": 3000,
+    "log":{
+        "file":"logs/logfile.log",
+        "level":"DEBUG"
+    }
+  },
+  "hybrid_module": {
+    "address": ["10.10.10.211", 65430]
+  },
+  "ccips_agent": {
+    "address": ["ccips_agent", 830],
+    "user": "user",
+    "pass": "passwd"
+  }
+}

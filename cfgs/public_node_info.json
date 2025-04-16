@@ -1,0 +1,23 @@
+{
+    "10.0.0.11/32": {
+        "id":"aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa",
+        "role": {
+            "192.168.123.200": "SERVER",
+            "192.168.123.300": "SERVER"
+        }
+    },
+    "10.0.0.20/32":{
+        "id": "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+        "role": {
+            "192.168.123.100": "CLIENT",
+            "192.168.123.200": "SERVER"
+        }
+    },
+    "192.168.123.300": {
+        "id": "cccccccc-cccc-cccc-cccc-cccccccccccc",
+        "role": {
+            "192.168.123.100": "CLIENT",
+            "192.168.123.200": "CLIENT"
+        }
+    }
+}

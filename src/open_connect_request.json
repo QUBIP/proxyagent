@@ -1,0 +1,17 @@
+{
+    "command": "OPEN_CONNECT",
+    "data": {
+        "source": "hybrid://Application1@aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa:123?oauth-token=9bc04678a0b11c&hybridization=xoring",
+        "destination": "hybrid://Application4@bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb:456?oauth-token=9bc04678a0b11c&hybridization=xoring",
+        "qos": {
+            "key_chunk_size": 20,
+            "max_bps": 32,
+            "min_bps": 32,
+            "jitter": 0,
+            "priority": 0,
+            "timeout": 0,
+            "ttl": 0,
+            "metadata_mimetype": "application/json"
+        }
+    }
+}
