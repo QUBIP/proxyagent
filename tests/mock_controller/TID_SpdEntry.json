@@ -1,0 +1,32 @@
+{
+    "spd-entry": {
+      "name": "out/10.0.0.10/in/10.0.0.100",
+      "direction": "inbound",
+      "reqid": "8603",
+      "ipsec-policy-config": {
+        "anti-replay-window-size": 32,
+        "traffic-selector": {
+          "local-prefix": "10.0.0.10/32",
+          "remote-prefix": "10.0.0.100/32",
+          "inner-protocol": "any"
+        },
+        "processing-info": {
+          "action": "protect",
+          "ipsec-sa-cfg": {
+            "ext-seq-num": true,
+            "seq-overflow": false,
+            "mode": "transport",
+            "protocol-parameters": "esp",
+            "esp-algorithms": {
+              "integrity": "5",
+              "encryption": {
+                "id": 1,
+                "algorithm-type": "12",
+                "key-length": "32"
+              }
+            }
+          }
+        }
+      }
+    }
+  }

@@ -1,0 +1,27 @@
+{
+  "proxy_agent_address" : {
+    "host" : "127.0.0.1",
+    "port" : 3000
+  },
+  "log":{
+      "file": "logs/logfile.log",
+      "level": "DEBUG"
+  },
+  "hybrid_module": {
+    "address": {
+      "host" : "localhost",
+      "port" : 24030
+    },
+    "public_node_info_path" : "./config/public_node_info.json"
+  },
+  "ccips_agent": {
+    "address": {
+      "host" : "localhost",
+      "port" : 12938
+    },
+    "credentials" : {
+      "username": "admin",
+      "password": "admin"
+    }
+  }
+}

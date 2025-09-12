@@ -1,0 +1,15 @@
+
+fix = true
+
+line-length = 100
+indent-width = 4
+
+[lint]
+exclude = [".venv", "venv"]
+extend-select = ["I", "ANN", "N"]
+
+[format]
+exclude = [".venv", "venv"]
+quote-style = "double"
+indent-style = "space"
+docstring-code-line-length = 100

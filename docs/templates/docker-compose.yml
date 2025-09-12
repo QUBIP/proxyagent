@@ -9,12 +9,11 @@ services:
         CFGFILE: "proxy_agent.json"
     ports:
         - "ip_network_1:inport:outport"
-        - "ip_network_2:inport:outport"
     networks:
       stack_network:
-        ipv4_address: 10.10.10.202  
+        ipv4_address: 10.10.10.202
       hybrid_network:
-        ipv4_address: 10.10.11.202  
+        ipv4_address: 10.10.11.202
 
 networks:
   stack_network:

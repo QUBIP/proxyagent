@@ -1,0 +1,5 @@
+2025-02-13 10:01:30,672 DEBUG [host None session 0x7fd8ccdfcd30] <SSHSession(session, initial daemon)> created: client_capabilities=<dict_keyiterator object at 0x7fd8ccd84908>
+2025-02-13 10:01:30,674 ERROR [ERROR HAPPEN WHEN CONNECTING TO NETCONF IN: localhost:830
+	Could not open socket to localhost:830]
+2025-02-13 10:01:30,674 INFO [PROXY AGENT RUNNING ON 127.0.0.1:3000]
+2025-02-13 10:01:30,674 INFO  * Running on http://127.0.0.1:3000/ (Press CTRL+C to quit)

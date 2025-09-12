@@ -1,0 +1,42 @@
+{
+    "sad-entry": {
+      "name": "out/10.0.0.11/in/10.0.0.20_2",
+      "reqid": "8603",
+      "ipsec-sa-config": {
+        "spi": "2",
+        "ext-seq-num": true,
+        "seq-overflow": false,
+        "traffic-selector": {
+          "local-prefix": "10.0.0.11/32",
+          "remote-prefix": "10.0.0.20/32",
+          "inner-protocol": "any"
+        },
+        "protocol-parameters": "esp",
+        "mode": "transport",
+        "esp-sa": {
+          "encryption": {
+            "encryption-algorithm": "12",
+            "key": "6d:73:54:f7:3e:56:c8:38:ef:9e:bf:78:03:e2:66:86:fb:e6:6c:15:3d:cb:11:2e:fb:24:ab:87:a5:1d:05:66",
+            "iv": "c3:4a:52:25:58:86:21:cb:e8:20:02:a9:58:be:fa:ac:4a:f8:05:83:d1:32:b3:c8:42:b2:3c:85:c0:0f:1b:19"
+          },
+          "integrity": {
+            "integrity-algorithm": "5",
+            "key": "36:1a:83:fb:7e:b4:f1:a3:21:1a:d4:94:1f:98:ac:aa:14:7f:9a:b5:aa:84:c5:3b:e2:fc:08:c4:ca:75:ff:ca"
+          }
+        },
+        "sa-lifetime-hard": {
+          "bytes": "0",
+          "packets": "0",
+          "time": "50",
+          "idle": "0"
+        },
+        "sa-lifetime-soft": {
+          "bytes": "0",
+          "packets": "0",
+          "time": "25",
+          "idle": "0"
+        }
+      }
+    }
+  }
+  
