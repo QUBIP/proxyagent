@@ -22,7 +22,12 @@ class HybridizationConfig(BaseModel):
     hybridization_method: HybridizationMethod
 
 def get_hybrid_module_url(spi: str, node_id: str, hybrid_config: HybridizationConfig) -> str:
-    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&kem_mec={hybrid_config.pqc_algorithm}"
+    if hybrid_config.use_qkd:
+        key_sources = f"{hybrid_config.pqc_algorithm},QKD"
+    else:
+        key_sources = hybrid_config.pqc_algorithm
+
+    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&key_sources={key_sources}"
 
 
 class KeyExtractor():
