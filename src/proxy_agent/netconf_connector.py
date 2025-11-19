@@ -60,3 +60,7 @@ class NetconfConnector:
         new_config: str = xml_message.replace(f"<{delete_location}>", f"<{delete_location} nc:operation=\"delete\">")
 
         self._send_edit_config_rpc(new_config)
+
+    def cleanup(self) -> None:
+        self._manager.close_session()
+        log.info("Netconf session stopped.")

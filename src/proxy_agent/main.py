@@ -1,5 +1,7 @@
 import os
+import signal
 import sys
+from types import FrameType
 
 sys.path.append(os.path.abspath("./src"))
 
@@ -9,7 +11,7 @@ import logging
 import threading
 
 from flask import Flask, request
-from werkzeug.serving import run_simple
+from werkzeug.serving import make_server
 
 from proxy_agent.format_adapters import (
     adapt_spd_algo_structure,
@@ -36,6 +38,12 @@ class ProxyAgent:
         self._flask_app = Flask(__name__)
         self._configure_endpoints()
 
+        self._input_server = make_server(
+            host=self._address.host, port=self._address.port, app=self._flask_app, threaded=True
+        )
+        self._app_context = self._flask_app.app_context()
+        self._app_context.push()
+
         self._netconf_connector_lock: threading.Lock = threading.Lock()
         self._netconf_connector: NetconfConnector = NetconfConnector(
             address=config.ccips_agent.address,
@@ -54,9 +62,20 @@ class ProxyAgent:
 
         self._flask_app.add_url_rule(rule="/createqkd", view_func=self._add_hybrid_config, methods=["POST"])
 
+    ##### EXECUTION METHODS #####
+
     def start(self) -> None:
         log.info("[PROXY AGENT RUNNING ON %s]", self._address)
-        run_simple(hostname=self._address.host, port=self._address.port, threaded=True, application=self._flask_app)
+        self._input_server.serve_forever()
+
+    def stop(self) -> None:
+        log.info("[SHUTTING DOWN SERVER]")
+        self._input_server.shutdown()
+        log.info("[SERVER STOPPED]")
+
+    def cleanup(self) -> None:
+        with self._netconf_connector_lock:
+            self._netconf_connector.cleanup()
 
     ##### FLASK APP METHODS #####
 
@@ -182,10 +201,18 @@ class ProxyAgent:
         return {"ipsec-ikeless": { "sad": sad_structure}}
 
 
-def main(cfg_file_path: str) -> None:
-    p_agent : ProxyAgent = ProxyAgent(cfg_file_path)
-    p_agent.start()
 
 if __name__ == '__main__':
     # CFG File for the Proxy Agent.
-    main(sys.argv[1])
+    p_agent : ProxyAgent = ProxyAgent(sys.argv[1])
+
+    def stop_proxy_agent(signum: int, frame: FrameType) -> None:
+        p_agent.stop()
+        p_agent.cleanup()
+
+    # Configuring the closing signals
+    signal.signal(signal.SIGTERM, stop_proxy_agent)  # SIGTERM
+    signal.signal(signal.SIGINT, stop_proxy_agent)  # SIGINT
+
+    proxy_server_thread = threading.Thread(target=p_agent.start)
+    proxy_server_thread.start()
