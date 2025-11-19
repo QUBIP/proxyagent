@@ -44,7 +44,7 @@ python src/proxy_agent.py config/proxy_agent.json
 
 While the proxy agent can be run directly, the tool that is usually used when deploying this component is Docker. Whether you use base docker or docker compose there are some things you may need to know:
 - The building process requires an argument, that is `CFGFILE`. It contains the path to the configuration file you want to use for that instance of docker, for example, `config/proxy_agent.json`.
-- In the current version of the project it will allways copy the public node info in `config/public_node_info.json`. Any changes that configuration must be done in that file.
+- The current version also requires the `PUBLIC_NODE_INFO` build argument, this should point to the a file with information about all the other proxy agents, the structure of this information can be seen in the [configuration section of this README](#public-node-information). An example of this argument would be `config/public_node_info.json`.
 - The proxy agent requires the port in `proxy_agent_address` expose so it can receive instructions from controllers that do not belong to any docker network the proxy agent belongs.
 
 ## Configuring the proxy agent
