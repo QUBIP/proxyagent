@@ -13,6 +13,7 @@ class LoggingConfig(BaseModel):
 class HybridModuleConfig(BaseModel):
     address: NetworkAddress
     public_node_info_path: str
+    qkd_required_if_used: bool
 
 class NetconfConfig(BaseModel):
     address: NetworkAddress

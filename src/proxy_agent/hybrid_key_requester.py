@@ -18,31 +18,51 @@ log = logging.getLogger(__name__)
 
 class HybridizationConfig(BaseModel):
     use_qkd: bool
+    qkd_required_if_used: bool
     pqc_algorithm: PqcAlgorithm
     hybridization_method: HybridizationMethod
 
 def get_hybrid_module_url(spi: str, node_id: str, hybrid_config: HybridizationConfig) -> str:
-    key_sources_list: list[str] = []
+    req_key_sources: list[str] = []
+    opt_key_sources: list[str] = []
 
     if hybrid_config.use_qkd:
-        key_sources_list.append("QKD")
+        if hybrid_config.qkd_required_if_used:
+            req_key_sources.append("QKD")
+        else:
+            opt_key_sources.append("QKD")
 
     if hybrid_config.pqc_algorithm != PqcAlgorithm.NONE:
-        key_sources_list.append(hybrid_config.pqc_algorithm)
+        req_key_sources.append(hybrid_config.pqc_algorithm)
 
-    key_sources_param = ",".join(key_sources_list)
-    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&req_key_sources={key_sources_param}"
+
+    url = f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}"
+
+    if req_key_sources:
+        url = f"{url}&req_key_sources={','.join(req_key_sources)}"
+
+    if opt_key_sources:
+        url = f"{url}&opt_key_sources={','.join(opt_key_sources)}"
+
+    return url
 
 
 class KeyExtractor():
-    def __init__(self, address: NetworkAddress, public_nodes_info_path: str) -> None:
+    def __init__(
+        self,
+        address: NetworkAddress,
+        public_nodes_info_path: str,
+        qkd_required_if_used: bool,
+    ) -> None:
 
         self._address: NetworkAddress = address
+        self._qkd_required_if_used: bool = qkd_required_if_used
         self.public_nodes_info: dict = load_json_file(public_nodes_info_path)
 
         self.hybrid_key_configs: dict[str, HybridizationConfig] = {}
         self.default_hybridization_config: HybridizationConfig = HybridizationConfig(
             use_qkd=True,
+            qkd_required_if_used=self._qkd_required_if_used,
             pqc_algorithm=PqcAlgorithm.ML_KEM512,
             hybridization_method=HybridizationMethod.XORING,
         )
@@ -126,6 +146,7 @@ class KeyExtractor():
         config_id = self._get_hybridization_config_id(new_config["endpoint1"], new_config["endpoint2"])
         hybrid_key_config = HybridizationConfig(
             use_qkd=new_config["use-qkd"],
+            qkd_required_if_used=self._qkd_required_if_used,
             pqc_algorithm=PqcAlgorithm.parse_from_string(new_config["pqc-algorithm"]),
             hybridization_method=HybridizationMethod.parse_from_string(new_config["hybridization-method"])
         )

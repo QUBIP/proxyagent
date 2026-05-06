@@ -13,7 +13,8 @@
       "host" : "localhost",
       "port" : 24031
     },
-    "public_node_info_path" : "./config/public_node_info.json"
+    "public_node_info_path" : "./config/public_node_info.json",
+    "qkd_required_if_used" : false
   },
   "ccips_agent": {
     "address": {

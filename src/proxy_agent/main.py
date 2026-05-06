@@ -57,6 +57,7 @@ class ProxyAgent:
         self._key_extractor: KeyExtractor = KeyExtractor(
             address=config.hybrid_module.address,
             public_nodes_info_path=config.hybrid_module.public_node_info_path,
+            qkd_required_if_used=config.hybrid_module.qkd_required_if_used,
         )
 
     def _configure_endpoints(self) -> None:

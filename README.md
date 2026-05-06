@@ -71,7 +71,8 @@ The parameters of the config file are:
       "host" : "host_where_the_hybrid_module_is_located",
       "port" : 24030 # Port where the hybridation module is located
     },
-    "public_node_info_path" : "./path/to/public_node_info.json"
+    "public_node_info_path" : "./path/to/public_node_info.json",
+    "qkd_required_if_used" : false // Whether the qkd source is required or optional when used.
   },
   "ccips_agent": {
     "address": {
