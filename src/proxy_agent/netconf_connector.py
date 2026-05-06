@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 
 import ncclient.manager
 import pyangbind.lib.pybindJSON as pbJ
@@ -16,14 +17,22 @@ class NetconfConnector:
         self, address: NetworkAddress, credentials: UserCredentials, connection_timeout: int
     ) -> None:
         log.info("[STARTING THE NETCONF SESSION WITH THE CCIPS AGENT]")
-        self._manager: ncclient.manager.Manager = ncclient.manager.connect(
-            host=address.host,
-            port=address.port,
-            username=credentials.username,
-            password=credentials.password,
-            timeout=connection_timeout,
-            hostkey_verify=False,
-        )
+
+        while True:
+            try:
+                self._manager: ncclient.manager.Manager = ncclient.manager.connect(
+                    host=address.host,
+                    port=address.port,
+                    username=credentials.username,
+                    password=credentials.password,
+                    timeout=connection_timeout,
+                    hostkey_verify=False,
+                )
+                break
+            except Exception as e:
+                log.error(f"[NETCONF INITIALIZATION FAILED BECAUSE OF: {e}]")
+                time.sleep(1)
+                log.info("[RETRYING NETCONF CONNECTION]")
         # except Exception as e:
         #     log.error(f"[ERROR HAPPEN WHEN CONNECTING TO NETCONF IN: {ip}:{port}\n\t{e}]")
         log.info("[NETCONF SESSION STARTED SUCCESSFULLY]")
