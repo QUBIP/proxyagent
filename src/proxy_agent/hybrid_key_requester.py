@@ -1,5 +1,9 @@
+import csv
 import logging
+import os
 import socket
+import threading
+import time
 
 from pydantic import BaseModel
 
@@ -67,6 +71,15 @@ class KeyExtractor():
             hybridization_method=HybridizationMethod.XORING,
         )
 
+        self._time_csv = open(os.getenv("CSV_PATH"), "w")
+        self._time_writer = csv.writer(self._time_csv)
+        self._csv_lock = threading.Lock()
+
+        self._time_writer.writerow(["sa_name", "open_connect", "get_key", "close", "total_time"])
+
+    def __del__(self) -> None:
+        self._time_csv.close()
+
     @staticmethod
     def _get_hybridization_config_id(endpoint1: str, endpoint2: str) -> str:
 
@@ -97,11 +110,14 @@ class KeyExtractor():
 
     def get_hybrid_key(self, spi: str, selector: dict, key_size: int) -> list:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as kdfix_socket:
+            start_time = time.perf_counter()
+
             # Connect to the server
             kdfix_socket.connect((self._address.host, self._address.port))
             log.info("Hybrid Module connected to KDFix server at %s", self._address)
 
 
+            socket_connected_time = time.perf_counter()
             hybrid_config = self._get_hybridization_config(selector)
             oc_qos= OpenConnectQos(
                 key_chunk_size=key_size,
@@ -129,6 +145,7 @@ class KeyExtractor():
                 raise Exception("The OPEN_CONNECT request failed")
 
             key_stream_id = oc_response["key_stream_id"]
+            open_connect_completed_time = time.perf_counter()
 
 
             gk_message = GetKeyMessage(key_stream_id=key_stream_id, index=0, metadata=GetKeyMetadata())
@@ -136,9 +153,22 @@ class KeyExtractor():
 
             # We store the key extracted.
             key = gk_response["key_buffer"]
+            get_key_completed_time = time.perf_counter()
 
             # Close the connection
             send_socket_request(kdfix_socket, "CLOSE", CloseMessage(key_stream_id=key_stream_id))
+            close_completed_time = time.perf_counter()
+
+            metrics = [
+                f"{selector['local-prefix']}-{selector['remote-prefix']}-{spi}",
+                open_connect_completed_time-socket_connected_time,
+                get_key_completed_time-open_connect_completed_time,
+                close_completed_time-get_key_completed_time,
+                close_completed_time-start_time
+                ]
+            log.info("Request %s timestamps: OPEN_CONNECT=%s GET_KEY=%s CLOSE=%s TOTAL=%s", metrics[0], metrics[1], metrics[2], metrics[3], metrics[4])
+            with self._csv_lock:
+                self._time_writer.writerow(metrics)
 
             return key
 
