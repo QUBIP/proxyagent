@@ -40,11 +40,13 @@ To run the Proxy Agent we only need to run the "proxy_agent.py" script with the 
 python src/proxy_agent.py config/proxy_agent.json
 ```
 
+Another option is adding the path to the configuration file in the environmental variable `CFGFILE`. The proxy agent will use the value of this variable as a backup if it does not receive arguments.
+
 ### Docker
 
 While the proxy agent can be run directly, the tool that is usually used when deploying this component is Docker. Whether you use base docker or docker compose there are some things you may need to know:
-- The building process requires an argument, that is `CFGFILE`. It contains the path to the configuration file you want to use for that instance of docker, for example, `config/proxy_agent.json`.
-- The current version also requires the `PUBLIC_NODE_INFO` build argument, this should point to the a file with information about all the other proxy agents, the structure of this information can be seen in the [configuration section of this README](#public-node-information). An example of this argument would be `config/public_node_info.json`.
+- The docker building process does not copy the configuration files into the docker, this means that both the [main configuration](#main-configuration) and the [public node information](#public-node-information) must be copied to the repository at running time, this can be archived using a bind mount. This way the same image can be used for machines with different configurations.
+- When running the image you must also provide the path to the config file (The one inside the container) through the environment variable `CFGFILE`.
 - The proxy agent requires the port in `proxy_agent_address` expose so it can receive instructions from controllers that do not belong to any docker network the proxy agent belongs.
 
 ## Configuring the proxy agent

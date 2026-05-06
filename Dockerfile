@@ -13,11 +13,4 @@ RUN pip install -r requirements.txt
 RUN mkdir logs
 COPY src src
 
-# Set the entrypoint to the script
-ARG CFGFILE
-COPY $CFGFILE config/config.json
-
-ARG PUBLIC_NODE_INFO
-COPY $PUBLIC_NODE_INFO config/public_node_info.json
-
-CMD [ "python3", "src/proxy_agent/main.py", "config/config.json"]
+CMD [ "python3", "src/proxy_agent/main.py"]

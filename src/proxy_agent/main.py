@@ -203,8 +203,14 @@ class ProxyAgent:
 
 
 if __name__ == '__main__':
+
+    if len(sys.argv) > 1:
+        config_path = sys.argv[1]
+    else:
+        config_path = os.getenv("CFGFILE")
+
     # CFG File for the Proxy Agent.
-    p_agent : ProxyAgent = ProxyAgent(sys.argv[1])
+    p_agent : ProxyAgent = ProxyAgent(config_path)
 
     def stop_proxy_agent(signum: int, frame: FrameType) -> None:
         p_agent.stop()
