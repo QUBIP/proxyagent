@@ -57,29 +57,30 @@ The parameters of the config file are:
 
 ```json
 {
+  "input_format" : "encoding_in_which_the_input_of_the_ccips_controller_will_come",
   "proxy_agent_address" : {
-    "host" : "hostWhereTheProxyAgentWillRun",
+    "host" : "host_where_the_proxy_agent_will_run",
     "port" : 3000 # Port where the proxy will run
   },
   "log":{
-      "file": "loggerFile",
-      "level": "loggerLevel"
+      "file": "logger_file",
+      "level": "logger_level"
   },
   "hybrid_module": {
     "address": {
-      "host" : "hostWhereTheHybridModuleIsLocated",
+      "host" : "host_where_the_hybrid_module_is_located",
       "port" : 24030 # Port where the hybridation module is located
     },
     "public_node_info_path" : "./path/to/public_node_info.json"
   },
   "ccips_agent": {
     "address": {
-      "host" : "hostWhereTheCCIPSAgentIsLocated",
+      "host" : "host_where_the_ccips_agent_is_located",
       "port" : 12938 # Port where the ccips agent is located
     },
     "credentials" : {
-      "username": "usernameToAccessToCcipsAgent",
-      "password": "passwordForCcipsAgent"
+      "username": "username_to_access_to_ccips_agent_netconf_server",
+      "password": "password_for_ccips_agent_netconf_server"
     }
   }
 }
