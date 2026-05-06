@@ -156,10 +156,10 @@ class ProxyAgent:
         selector: dict = sad_content["sad-entry"]["ipsec-sa-config"]["traffic-selector"]
 
         # Get the key from the hybridization module.
-        raw_key =  self._key_extractor.get_hybrid_key(spi, selector, 20)
+        raw_key =  self._key_extractor.get_hybrid_key(spi, selector, 32)
         log.debug(f"[SPIs AND KEY ASSOCIATED: SPI={spi} KEY={raw_key}]")
 
-        adapted_key = byte_list_to_octect_string(raw_key)[:120]
+        adapted_key = byte_list_to_octect_string(raw_key)
         log.debug("[KEY ADAPTED TO: %s]", adapted_key)
 
         # Adapt key to the CCIPS Agent needs.
