@@ -2,6 +2,7 @@
 from pydantic import BaseModel
 
 from proxy_agent.model.core_types import NetworkAddress, UserCredentials
+from proxy_agent.model.enums import InputFormat
 
 ## Base Config ##
 
@@ -19,6 +20,7 @@ class NetconfConfig(BaseModel):
 
 class ProxyAgentConfig(BaseModel):
     proxy_agent_address: NetworkAddress
+    input_format: InputFormat
     log: LoggingConfig
     hybrid_module: HybridModuleConfig
     ccips_agent: NetconfConfig

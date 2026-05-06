@@ -16,10 +16,12 @@ from werkzeug.serving import make_server
 from proxy_agent.format_adapters import (
     adapt_spd_algo_structure,
     byte_list_to_octect_string,
-    extract_entries,
+    extract_json_entries,
+    extract_xml_entries,
 )
 from proxy_agent.hybrid_key_requester import KeyExtractor
 from proxy_agent.model.config import ProxyAgentConfig
+from proxy_agent.model.enums import InputFormat
 from proxy_agent.netconf_connector import NetconfConnector
 from proxy_agent.utils.io_utils import load_json_file
 from proxy_agent.utils.log_utils import create_simple_logger
@@ -32,6 +34,7 @@ class ProxyAgent:
         config: ProxyAgentConfig = ProxyAgentConfig.model_validate(load_json_file(config_path))
 
         self._address = config.proxy_agent_address
+        self._input_format = config.input_format
         create_simple_logger(log_config=config.log)
 
         # Security Associations stored by SPI index.
@@ -83,7 +86,11 @@ class ProxyAgent:
     def _register_entries(self)-> dict[str, str]:
         content = request.data.decode('utf-8')
 
-        extracted_entries = extract_entries(content)
+        if self._input_format == InputFormat.JSON:
+            extracted_entries = extract_json_entries(content)
+        else:
+            extracted_entries = extract_xml_entries(content)
+
         for entry in extracted_entries:
             log.debug("[MANAGING JSON ENTRY: %s]", entry)
 
@@ -116,7 +123,7 @@ class ProxyAgent:
     # DELETE method /ipsec-entries endpoint
     def _delete_entries(self) -> dict[str, str]:
         content = request.data.decode("utf-8")
-        entries = extract_entries(content)
+        entries = extract_json_entries(content)
 
         for entry in entries:
             if "sad-entry" in entry:

@@ -5,6 +5,10 @@ from enum import StrEnum
 
 log = logging.getLogger(__name__)
 
+class InputFormat(StrEnum):
+    JSON = "json"
+    XML = "xml"
+
 class PqcAlgorithm(StrEnum):
     NONE = "None"
 
@@ -45,6 +49,11 @@ class PqcAlgorithm(StrEnum):
     FRODO_KEM_640_SHAKE = "FrodoKEM-640-SHAKE"
     FRODO_KEM_976_SHAKE = "FrodoKEM-976-SHAKE"
     FRODO_KEM_1344_SHAKE = "FrodoKEM-1344-SHAKE"
+
+    #### Classic ####
+
+    DIFFIE_HELLMAN = "Diffie-Hellman"
+
 
     @classmethod
     def parse_from_string(cls, input_string: str) -> StrEnum:

@@ -5,9 +5,11 @@ import json
 import logging
 import re
 
+import xmltodict
+
 log = logging.getLogger(__name__)
 
-def extract_entries(input_string: str) -> list[dict]:
+def extract_json_entries(input_string: str) -> list[dict]:
     """
     Extracts and parses multiple JSON objects from a given string.
 
@@ -51,14 +53,29 @@ def extract_entries(input_string: str) -> list[dict]:
         return entries
 
     except Exception as e:
-        print(f"Unexpected error: {e}")
+        log.error(f"Unexpected error: {e}")
         return []
+
+def extract_xml_entries(input_string: str) -> list[dict]:
+    xml_entries = []
+    parsed_entries = []
+
+    try:
+        xml_entries.extend(re.findall("<spd-entry>[\s\S]*?</spd-entry>", input_string))
+        xml_entries.extend(re.findall("<sad-entry>[\s\S]*?</sad-entry>", input_string))
+
+        for entry in xml_entries:
+            parsed_entries.append(xmltodict.parse(entry))
+    except Exception as e:
+        log.error(f"Unexpected error: {e}")
+
+    return parsed_entries
 
 
 def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
-    """ A transformation is necessary from the structure in the esp-algorithm container that we received 
+    """ A transformation is necessary from the structure in the esp-algorithm container that we received
     to the official standard 9061 Template, this is necessary to build the XML NETCONF message at the end:
-        * What we received:                    
+        * What we received:
             "esp-algorithms": {
                 "integrity": "5",
                 "encryption": {
@@ -68,14 +85,14 @@ def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
                 }
             }
         * What we need to send:
-            "esp-algorithms": {                                                                                                                                                                        
-                "integrity": ["5"]                                                                                                                                                                         
-                "encryption": {                                                                                                                                                                        
-                    "1": {                                                                                                                                                                             
-                        "id": 1,                                                                                                                                                                       
-                        "algorithm-type": 3,                                                                                                                                                           
-                        "key-length": 128                                                                                                                                                              
-                    }                                                                                                                                                                                  
+            "esp-algorithms": {
+                "integrity": ["5"]
+                "encryption": {
+                    "1": {
+                        "id": 1,
+                        "algorithm-type": 3,
+                        "key-length": 128
+                    }
                 }
 
     Args:
@@ -87,8 +104,8 @@ def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
     log.info("[ADAPTING SPD ENTRY ESP ALGORITHM STRUCTURE]")
 
     new_spd_entry = copy.deepcopy(received_spd_entry)
-    new_entry_sa_config = new_spd_entry["spd-entry"]["ipsec-policy-config"]["processing-info"]["ipsec-sa-cfg"] 
-    
+    new_entry_sa_config = new_spd_entry["spd-entry"]["ipsec-policy-config"]["processing-info"]["ipsec-sa-cfg"]
+
     log.info("[INITIAL SPD ipsec-sa-config: %s]", new_entry_sa_config)
     esp_algo_adapted: dict = {
         "integrity": [new_entry_sa_config["esp-algorithms"]["integrity"]],
@@ -103,7 +120,7 @@ def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
 
 def _hex_string_to_octect_string(hex_string: str) -> str:
     """ Transforms a hex string into octect format
-    
+
     Args:
         hex_string (str): String in hex format (0x0123456789abdef)
 
