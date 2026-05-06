@@ -87,13 +87,13 @@ def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
         * What we need to send:
             "esp-algorithms": {
                 "integrity": ["5"]
-                "encryption": {
-                    "1": {
+                "encryption": [
+                    {
                         "id": 1,
                         "algorithm-type": 3,
                         "key-length": 128
                     }
-                }
+                ]
 
     Args:
         spd_entry (dict): A dictionary conatining a spd-entry received from the CCIPS controller.
@@ -109,9 +109,7 @@ def adapt_spd_algo_structure(received_spd_entry: dict) -> dict:
     log.info("[INITIAL SPD ipsec-sa-config: %s]", new_entry_sa_config)
     esp_algo_adapted: dict = {
         "integrity": [new_entry_sa_config["esp-algorithms"]["integrity"]],
-        "encryption": {
-            new_entry_sa_config["esp-algorithms"]["encryption"]["id"]: new_entry_sa_config["esp-algorithms"]["encryption"]
-        }
+        "encryption": [new_entry_sa_config["esp-algorithms"]["encryption"]]
     }
     new_entry_sa_config["esp-algorithms"] = esp_algo_adapted
 

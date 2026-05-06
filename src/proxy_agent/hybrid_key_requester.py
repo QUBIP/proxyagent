@@ -91,7 +91,7 @@ class KeyExtractor():
         if hybrid_config_id in self.hybrid_key_configs:
             return self.hybrid_key_configs[hybrid_config_id]
         else:
-            log.error(f"{hybrid_config_id} has no hrybridization config, using the default one")
+            log.warning(f"{hybrid_config_id} has no hrybridization config, using the default one")
             return self.default_hybridization_config
 
 

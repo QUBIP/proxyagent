@@ -128,11 +128,11 @@ class ProxyAgent:
 
         for entry in entries:
             if "sad-entry" in entry:
-                root_entry = {"sad" : { "sad-entry" : {entry["sad-entry"]["name"] : entry["sad-entry"]}}}
+                root_entry = {"sad" : { "sad-entry" : [entry["sad-entry"]]}}
                 with self._netconf_connector_lock:
                     self._netconf_connector.send_delete(root_entry, "sad-entry")
             elif "spd-entry" in entry:
-                root_entry = {"spd" : { "spd-entry" : {entry["spd-entry"]["name"] : entry["spd-entry"]}}}
+                root_entry = {"spd" : { "spd-entry" :  [entry["spd-entry"]]}}
                 with self._netconf_connector_lock:
                     self._netconf_connector.send_delete(root_entry, "spd-entry")
 
@@ -170,19 +170,13 @@ class ProxyAgent:
         with self._netconf_connector_lock:
             # NETCONF:
             # With the initial content of the RFC9061, SPIs and Keys, the final configuration is sent to the CCIPS Agent.
-            self._netconf_connector.send_new_config(content_with_key["ipsec-ikeless"])
+            self._netconf_connector.send_new_config(content_with_key)
 
     def _register_spd_entry(self, spd_content: dict) -> None:
         log.debug("[WORKING ON SPD ENTRIES]")
         adapted_entry = adapt_spd_algo_structure(spd_content)
 
-        spd_from_root: dict = {
-            "spd": {
-                "spd-entry": {
-                    adapted_entry["spd-entry"]["name"]: adapted_entry["spd-entry"]
-                }
-            }
-        }
+        spd_from_root: dict = {"spd": {"spd-entry": [adapted_entry["spd-entry"]]}}
         log.debug(f"[FINAL SPD STRUCTURE: \n{json.dumps(spd_from_root, indent=4)}]")
 
         with self._netconf_connector_lock:
@@ -204,9 +198,7 @@ class ProxyAgent:
         new_content_esp_config["encryption"]["iv"] = adapted_key
         new_content_esp_config["integrity"]["key"] = adapted_key
 
-        sad_structure: dict = {"sad-entry": {new_content["sad-entry"]["name"]: new_content["sad-entry"]}}
-
-        return {"ipsec-ikeless": { "sad": sad_structure}}
+        return { "sad": {"sad-entry": [new_content["sad-entry"]]}}
 
 
 

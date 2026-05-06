@@ -1,12 +1,9 @@
-import json
 import logging
 import time
 
 import ncclient.manager
-import pyangbind.lib.pybindJSON as pbJ
-import pyangbind.lib.serialise as pyang_serialise
+import xmltodict
 
-import proxy_agent.pyang.ietf_i2nsf_ikeless as pyang_ikeless_module
 from proxy_agent.model.core_types import NetworkAddress, UserCredentials
 
 log = logging.getLogger(__name__)
@@ -38,10 +35,10 @@ class NetconfConnector:
         log.info("[NETCONF SESSION STARTED SUCCESSFULLY]")
 
     def _model_to_xml(self, final_content: dict) -> str:
-        top_ikeless_class: str = "yc_ipsec_ikeless_ietf_i2nsf_ikeless__ipsec_ikeless"
+        log.debug("Parsing JSON to XML")
 
-        pyang_object = pbJ.loads(json.dumps(final_content), pyang_ikeless_module, top_ikeless_class)
-        return pyang_serialise.pybindIETFXMLEncoder.serialise(pyang_object)
+        xml_model_data = xmltodict.unparse({ "ipsec-ikeless" : final_content}, full_document=False)
+        return xml_model_data.replace("<ipsec-ikeless>", "<ipsec-ikeless xmlns=\"urn:ietf:params:xml:ns:yang:ietf-i2nsf-ikeless\">")
 
     def _send_edit_config_rpc(self, new_config: str) -> None:
         log.info("PREPARED NETCONF MESSAGE: %s", new_config)
