@@ -31,7 +31,7 @@ def get_hybrid_module_url(spi: str, node_id: str, hybrid_config: HybridizationCo
         key_sources_list.append(hybrid_config.pqc_algorithm)
 
     key_sources_param = ",".join(key_sources_list)
-    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&key_sources={key_sources_param}"
+    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&req_key_sources={key_sources_param}"
 
 
 class KeyExtractor():
