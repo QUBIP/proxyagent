@@ -6,6 +6,8 @@ from enum import StrEnum
 log = logging.getLogger(__name__)
 
 class PqcAlgorithm(StrEnum):
+    NONE = "None"
+
     BIKE_L1 = "BIKE-L1"
     BIKE_L3 = "BIKE-L3"
     BIKE_L5 = "BIKE-L5"
@@ -29,7 +31,7 @@ class PqcAlgorithm(StrEnum):
     KYBER512 = "Kyber512"
     KYBER768 = "Kyber768"
     KYBER1024 = "Kyber1024"
-    
+
     ML_KEM512 = "ML-KEM-512"
     ML_KEM768 = "ML-KEM-768"
     ML_KEM1024 =  "ML-KEM-1024"

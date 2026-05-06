@@ -22,12 +22,16 @@ class HybridizationConfig(BaseModel):
     hybridization_method: HybridizationMethod
 
 def get_hybrid_module_url(spi: str, node_id: str, hybrid_config: HybridizationConfig) -> str:
-    if hybrid_config.use_qkd:
-        key_sources = f"{hybrid_config.pqc_algorithm},QKD"
-    else:
-        key_sources = hybrid_config.pqc_algorithm
+    key_sources_list: list[str] = []
 
-    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&key_sources={key_sources}"
+    if hybrid_config.use_qkd:
+        key_sources_list.append("QKD")
+
+    if hybrid_config.pqc_algorithm != PqcAlgorithm.NONE:
+        key_sources_list.append(hybrid_config.pqc_algorithm)
+
+    key_sources_param = ",".join(key_sources_list)
+    return f"hybrid://SPI_{spi}@{node_id}?hybridization={hybrid_config.hybridization_method}&key_sources={key_sources_param}"
 
 
 class KeyExtractor():
@@ -35,7 +39,7 @@ class KeyExtractor():
 
         self._address: NetworkAddress = address
         self.public_nodes_info: dict = load_json_file(public_nodes_info_path)
-        
+
         self.hybrid_key_configs: dict[str, HybridizationConfig] = {}
         self.default_hybridization_config: HybridizationConfig = HybridizationConfig(
             use_qkd=True,
